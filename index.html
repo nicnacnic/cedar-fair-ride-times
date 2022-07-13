@@ -6,35 +6,56 @@
     </head>
 
     <body>
+        <p style="font-weight: bold; margin-bottom: 2px;">Park Selection</p>
         <select onChange="getWaitTimes()">
-            <option value="CF_GA">California's Great America</option>
-            <option value="CF_CW">Canada's Wonderland</option>
-            <option value="CF_CA">Carowinds</option>
-            <option selected value="CF_CP">Cedar Point</option>
-            <option value="CF_KI">King's Island</option>
-            <option value="CF_KBF">Knott's Berry Farm</option>
+            <option value="bdf9b533-144c-4b78-aa2f-5173c5ce5e85">California's Great America</option>
+            <option value="66f5d97a-a530-40bf-a712-a6317c96b06d">Canada's Wonderland</option>
+            <option value="24cdcaa8-0500-4340-9725-992865eb18d6">Carowinds</option>
+            <option selected value="c8299e1a-0098-4677-8ead-dd0da204f8dc">Cedar Point</option>
+            <option value="a0df8d87-7f72-4545-a58d-eb8aa76f914b">King's Island</option>
+            <option value="0a6123bb-1e8c-4b18-a2d3-2696cf2451f5">Knott's Berry Farm</option>
         </select>
         <table>
             <thead>
                 <td>Ride</td>
-                <td>Wait Time</td>
+                <td>Wait Time (mins)</td>
             </thead>
             <tbody>
 
             </tbody>
         </table>
         <script>
+            getWaitTimes();
+
             async function getWaitTimes() {
                 let selectValue = document.querySelector('select').value;
-                let rideTimes = await GET(`https://cf.te2.biz/rest/venue/${selectValue}/poi/all`)
+                let rideTimes = await GET(`https://api.themeparks.wiki/v1/entity/${selectValue}/live`)
+                let tbody = document.querySelector('tbody');
+                tbody.innerHTML = '';
                 console.log(rideTimes)
+                let rideData = rideTimes.data.liveData.sort(function (a, b) {
+                    var textA = a.name.toUpperCase();
+                    var textB = b.name.toUpperCase();
+                    return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+                });
+                rideData.forEach(ride => {
+                    if (ride.entityType !== 'ATTRACTION' || ride.queue === undefined) return;
+                    let row = document.createElement('tr');
+                    let waitTime = '';
+                    if (ride.queue !== undefined && ride.queue.STANDBY.waitTime > 0 && ride.status === 'CLOSED') waitTime = 'DOWN';
+                    else if ((ride.queue === undefined || ride.queue.STANDBY.waitTime <= 0) && ride.status === 'CLOSED') waitTime = 'CLOSED';
+                    else waitTime = ride.queue.STANDBY.waitTime
+                    row.insertCell().innerHTML = ride.name;
+                    row.insertCell().innerHTML = waitTime;
+                    tbody.append(row)
+                })
             }
 
             async function GET(endpoint) {
                 let response = await fetch(`${endpoint}`, {
                     method: 'GET', headers: {
                         "Authorization": `Basic TW9iaWxlX0FQSTpNb2JpbGVfQVBJ`
-                    }
+                    },
                 });
                 let data = await response.json();
                 switch (response.status) {
@@ -44,10 +65,47 @@
             }
 
             async function apiError(error, body) {
-                if (error.status === 401 && !signin) return location.href = '/login';
-                else if (error.status !== 409) showToast('error', `An API error has occured. Please check the browser console for more details.`)
+                if (error.status !== 409) showToast('error', `An API error has occured. Please check the browser console for more details.`)
                 if (error.status !== 401 && error.status !== 409 && error.status !== 403) console.error('Error while making API request.\n\n', `Status:`, error.status, `\nStatus Text:`, body, `\nRequested Endpoint:`, error.url, `\n\nIf this issue persists, please open an issue in the Github repository https://github.com/Indiethon/donation-tracker/issues`);
             }
         </script>
+        <style>
+            body {
+                background-color: rgb(246, 247, 251);
+            }
+            select {
+                margin-bottom: 10px;
+            }
+
+            thead {
+                font-weight: bold;
+            }
+
+            table,
+            th,
+            td {
+                border: 2px solid black;
+            }
+
+            table {
+                border-collapse: collapse;
+            }
+
+            td:nth-child(2) {
+                text-align: center;
+            }
+
+            td {
+                padding: 10px;
+            }
+
+            tr:nth-child(odd) {
+                background-color: #e8e6e6;
+            }
+
+            tr:nth-child(even) {
+                background-color: white;
+            }
+        </style>
     </body>
 </htlm>
