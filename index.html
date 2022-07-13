@@ -32,10 +32,10 @@
             getWaitTimes();
 
             async function getWaitTimes() {
-                let selectValue = document.querySelector('select').value;
-                let rideTimes = await GET(`https://api.themeparks.wiki/v1/entity/${selectValue}/live`)
                 let tbody = document.querySelector('tbody');
                 tbody.innerHTML = '';
+                let selectValue = document.querySelector('select').value;
+                let rideTimes = await GET(`https://api.themeparks.wiki/v1/entity/${selectValue}/live`)
                 console.log(rideTimes)
                 let rideData = rideTimes.data.liveData.sort(function (a, b) {
                     var textA = a.name.toUpperCase();
@@ -100,6 +100,7 @@
             th,
             td {
                 border: 2px solid black;
+                margin-right: 0;
             }
 
             table {
@@ -120,6 +121,9 @@
 
             tr:nth-child(even) {
                 background-color: white;
+            }
+            p {
+                width: 100%;
             }
         </style>
     </body>
