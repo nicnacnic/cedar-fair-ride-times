@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<htlm>
+
+    <head>
+        <title>Cedar Fair Ride Times</title>
+    </head>
+
+    <body>
+        <select onChange="getWaitTimes()">
+            <option value="CF_GA">California's Great America</option>
+            <option value="CF_CW">Canada's Wonderland</option>
+            <option value="CF_CA">Carowinds</option>
+            <option selected value="CF_CP">Cedar Point</option>
+            <option value="CF_KI">King's Island</option>
+            <option value="CF_KBF">Knott's Berry Farm</option>
+        </select>
+        <table>
+            <thead>
+                <td>Ride</td>
+                <td>Wait Time</td>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+        <script>
+            async function getWaitTimes() {
+                let selectValue = document.querySelector('select').value;
+                let rideTimes = await GET(`https://cf.te2.biz/rest/venue/${selectValue}/poi/all`)
+                console.log(rideTimes)
+            }
+
+            async function GET(endpoint) {
+                let response = await fetch(`/api/${endpoint}`, {
+                    method: 'GET', headers: {
+                        "Authorization": `Basic TW9iaWxlX0FQSTpNb2JpbGVfQVBJ`
+                    }
+                });
+                let data = await response.json();
+                switch (response.status) {
+                    case 200: return { error: false, status: response.status, data: data }; break;
+                    default: apiError(response, data); return { error: true, status: response.status, data: data }; break;
+                }
+            }
+
+            async function apiError(error, body) {
+                if (error.status === 401 && !signin) return location.href = '/login';
+                else if (error.status !== 409) showToast('error', `An API error has occured. Please check the browser console for more details.`)
+                if (error.status !== 401 && error.status !== 409 && error.status !== 403) console.error('Error while making API request.\n\n', `Status:`, error.status, `\nStatus Text:`, body, `\nRequested Endpoint:`, error.url, `\n\nIf this issue persists, please open an issue in the Github repository https://github.com/Indiethon/donation-tracker/issues`);
+            }
+        </script>
+    </body>
+</htlm>
