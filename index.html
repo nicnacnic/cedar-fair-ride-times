@@ -31,7 +31,7 @@
             }
 
             async function GET(endpoint) {
-                let response = await fetch(`/api/${endpoint}`, {
+                let response = await fetch(`${endpoint}`, {
                     method: 'GET', headers: {
                         "Authorization": `Basic TW9iaWxlX0FQSTpNb2JpbGVfQVBJ`
                     }
