@@ -7,14 +7,18 @@
 
     <body>
         <p style="font-weight: bold; margin-bottom: 2px;">Park Selection</p>
-        <select onChange="getWaitTimes()">
-            <option value="bdf9b533-144c-4b78-aa2f-5173c5ce5e85">California's Great America</option>
-            <option value="66f5d97a-a530-40bf-a712-a6317c96b06d">Canada's Wonderland</option>
-            <option value="24cdcaa8-0500-4340-9725-992865eb18d6">Carowinds</option>
-            <option selected value="c8299e1a-0098-4677-8ead-dd0da204f8dc">Cedar Point</option>
-            <option value="a0df8d87-7f72-4545-a58d-eb8aa76f914b">King's Island</option>
-            <option value="0a6123bb-1e8c-4b18-a2d3-2696cf2451f5">Knott's Berry Farm</option>
-        </select>
+        <div class="top">
+            <select onChange="getWaitTimes()">
+                <option value="bdf9b533-144c-4b78-aa2f-5173c5ce5e85">California's Great America</option>
+                <option value="66f5d97a-a530-40bf-a712-a6317c96b06d">Canada's Wonderland</option>
+                <option value="24cdcaa8-0500-4340-9725-992865eb18d6">Carowinds</option>
+                <option selected value="c8299e1a-0098-4677-8ead-dd0da204f8dc">Cedar Point</option>
+                <option value="a0df8d87-7f72-4545-a58d-eb8aa76f914b">King's Island</option>
+                <option value="0a6123bb-1e8c-4b18-a2d3-2696cf2451f5">Knott's Berry Farm</option>
+            </select>
+            <button onClick="getWaitTimes()">Refresh</button>
+        </div>
+        <p class="lastUpdated" style="margin-top: 0px; margin-bottom: 10px;">Last Updated: Never</p>
         <table>
             <thead>
                 <td>Ride</td>
@@ -49,6 +53,10 @@
                     row.insertCell().innerHTML = waitTime;
                     tbody.append(row)
                 })
+
+                let lastUpdated = document.querySelector('.lastUpdated');
+                var time = new Date();
+                lastUpdated.innerHTML = `Last Updated: ${time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}`
             }
 
             async function GET(endpoint) {
@@ -72,7 +80,14 @@
         <style>
             body {
                 background-color: rgb(246, 247, 251);
+                width: 100%;
+                height: 100%;
             }
+
+            .top {
+                display: inline-block;
+            }
+
             select {
                 margin-bottom: 10px;
             }
