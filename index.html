@@ -28,13 +28,16 @@
 
             </tbody>
         </table>
+        <p class="loading">Loading, please wait...</p>
         <script>
             getWaitTimes();
 
             async function getWaitTimes() {
                 let selectValue = document.querySelector('select').value;
                 let tbody = document.querySelector('tbody');
+                let loading = document.querySelector('.loading');
                 tbody.innerHTML = '';
+                loading.style.display = 'block';
                 let data = await GET(`https://cedar-fair-ride-times-api.herokuapp.com/${selectValue}`)
                 let coastersArray = data.data.data.filter((x) => x.type === "Coasters")
                 let rideData = coastersArray.sort(function (a, b) {
@@ -58,6 +61,8 @@
                 let lastUpdated = document.querySelector('.lastUpdated');
                 var time = new Date();
                 lastUpdated.innerHTML = `Last Updated: ${time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}`
+           
+                loading.style.display = 'none'
             }
 
             async function GET(endpoint) {
@@ -78,8 +83,8 @@
         <style>
             body {
                 background-color: rgb(246, 247, 251);
-                width: 1vw;
-                height: 1vh;
+                width: 100vw;
+                height: 100vh;
                 overflow-x: hidden;
             }
 
