@@ -32,16 +32,6 @@
             getWaitTimes();
 
             async function getWaitTimes() {
-<<<<<<< HEAD
-                let selectValue = document.querySelector('select').value;
-                let tbody = document.querySelector('tbody');
-                tbody.innerHTML = '';
-                let data = await GET(`https://cedar-fair-ride-times-api.herokuapp.com/${selectValue}`)
-                let coastersArray = data.data.data.filter((x) => x.type === "Coasters")
-                let rideData = coastersArray.sort(function (a, b) {
-                    var textA = a.label.toUpperCase();
-                    var textB = b.label.toUpperCase();
-=======
                 let tbody = document.querySelector('tbody');
                 tbody.innerHTML = '';
                 let selectValue = document.querySelector('select').value;
@@ -50,7 +40,6 @@
                 let rideData = rideTimes.data.liveData.sort(function (a, b) {
                     var textA = a.name.toUpperCase();
                     var textB = b.name.toUpperCase();
->>>>>>> 593a9032b3f42c6eba79176f425d146fc22e77e4
                     return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
                 });
                 console.log(rideData)
